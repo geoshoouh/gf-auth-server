@@ -19,10 +19,6 @@ class GF_UserManagementServiceTests {
 	@Autowired
     GF_UserManagementService userManagementService;
 
-    private GF_User registrationUtil(UserRole role) {
-        return this.registerationUtil(role, RandomStringUtils.randomAlphanumeric(15));
-    }
-
     private GF_User registerationUtil(UserRole role, String password) {
 
         String roleString;
@@ -91,7 +87,7 @@ class GF_UserManagementServiceTests {
 
         ReqResDTO response = this.userManagementService.register(request);
 
-        Assert.isTrue(response.statusCode() == 200, "Reponse code was " + response.statusCode());
+        Assert.eq(response.statusCode(), 200, "Expected status code 200, was " + response.statusCode());
         Assert.isTrue(this.userManagementService.userCount() == 1);
     }
 
@@ -120,8 +116,58 @@ class GF_UserManagementServiceTests {
 
         ReqResDTO response = this.userManagementService.login(request);
 
-        Assert.isTrue(response.statusCode() == 200);
+        Assert.eq(response.statusCode(), 200, "Expected status code 200, was " + response.statusCode());
         Assert.notNull(response.token());
         Assert.notNull(response.refreshToken());
+    }
+
+    @Test
+    void userCanRefreshTokenWork() {
+
+        String password = "my-secure-password";
+
+        GF_User registeredUser = this.registerationUtil(UserRole.TRAINER, password);
+
+        ReqResDTO loginRequest = new ReqResDTO(
+            0, 
+            null, 
+            null, 
+            null, 
+            null, 
+            null, 
+            null,
+            null, 
+            null, 
+            null, 
+            registeredUser.getEmail(), 
+            password, 
+            null, 
+            null
+        );
+
+        ReqResDTO loginResponse = this.userManagementService.login(loginRequest);
+
+        ReqResDTO refreshTokenRequest = new ReqResDTO(
+            0, 
+            null, 
+            null, 
+            loginResponse.token(), 
+            loginResponse.refreshToken(), 
+            null, 
+            null,
+            null, 
+            null, 
+            null, 
+            null, 
+            null, 
+            null, 
+            null
+        );
+
+        ReqResDTO refreshTokenResponse = this.userManagementService.refreshToken(refreshTokenRequest);
+
+        Assert.eq(refreshTokenResponse.statusCode(), 200, "Expected 200, was " + refreshTokenResponse.statusCode());
+        Assert.notNull(refreshTokenResponse.token());
+        Assert.notNull(refreshTokenResponse.refreshToken());
     }
 }
