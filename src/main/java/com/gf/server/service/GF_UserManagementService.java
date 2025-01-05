@@ -12,7 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.gf.server.dto.ReqResDTO;
-import com.gf.server.entity.User;
+import com.gf.server.entity.GF_User;
 import com.gf.server.enumeration.UserRole;
 import com.gf.server.repository.UserRepository;
 import com.gf.server.util.JwtUtils;
@@ -39,10 +39,10 @@ public class GF_UserManagementService {
         int responseStatusCode = 500;
         String responseMessage = null;
         String responseErrorMessage = null;
-        User responseUser = null;
+        GF_User responseUser = null;
         
         try {
-            User user = new User();
+            GF_User user = new GF_User();
 
             user.setEmail(request.email());
             user.setFirstName(request.firstName());
@@ -50,7 +50,7 @@ public class GF_UserManagementService {
             user.setRole(UserRole.stringToEnum(request.role()));
             user.setPassword(passwordEncoder.encode(request.password()));
 
-            User userDB_Result = userRepository.save(user);
+            GF_User userDB_Result = userRepository.save(user);
 
             if (userDB_Result.getId() > 0) {
                 responseStatusCode = 200;
@@ -108,7 +108,7 @@ public class GF_UserManagementService {
             responseRefreshToken = refreshToken;
             responseExpirationTime = "24Hrs";
             responseMessage = "Successfully logged in.";
-            
+    
         } catch (Exception e) {
             responseErrorMessage = e.getMessage();
         }
@@ -144,7 +144,7 @@ public class GF_UserManagementService {
 
         try {
             String userEmail = jwtUtils.extractUsername(request.token());
-            User user = userRepository.findByEmail(userEmail).orElseThrow();
+            GF_User user = userRepository.findByEmail(userEmail).orElseThrow();
 
             if (jwtUtils.tokenValid(request.refreshToken(), user)) {
                 var jwt = jwtUtils.generateToken(user);
@@ -184,10 +184,10 @@ public class GF_UserManagementService {
         int responseStatusCode = 500;
         String responseErrorMessage = null;
         String responseMessage = null;
-        List<User> responseUserList = new ArrayList<User>();
+        List<GF_User> responseUserList = new ArrayList<GF_User>();
 
         try {
-            List<User> result = userRepository.findAll();
+            List<GF_User> result = userRepository.findAll();
 
             if (!result.isEmpty()) {
                 responseStatusCode = 200;

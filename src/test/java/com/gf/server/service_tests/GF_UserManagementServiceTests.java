@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.gf.server.dto.ReqResDTO;
-import com.gf.server.entity.User;
+import com.gf.server.entity.GF_User;
 import com.gf.server.enumeration.UserRole;
 import com.gf.server.service.GF_UserManagementService;
 
@@ -19,8 +19,11 @@ class GF_UserManagementServiceTests {
 	@Autowired
     GF_UserManagementService userManagementService;
 
+    private GF_User registrationUtil(UserRole role) {
+        return this.registerationUtil(role, RandomStringUtils.randomAlphanumeric(15));
+    }
 
-    private User registerationUtil(UserRole role) {
+    private GF_User registerationUtil(UserRole role, String password) {
 
         String roleString;
 
@@ -50,7 +53,7 @@ class GF_UserManagementServiceTests {
             null, 
             roleString, 
             RandomStringUtils.randomAlphanumeric(7) + "@" + RandomStringUtils.randomAlphabetic(4) + ".com", 
-            RandomStringUtils.randomAlphanumeric(15), 
+            password, 
             null, 
             null
         );
@@ -92,4 +95,31 @@ class GF_UserManagementServiceTests {
         Assert.isTrue(this.userManagementService.userCount() == 1);
     }
 
+    @Test  
+    void registeredUserCanLogin() {
+
+        String password = "my-secure-password";
+        GF_User registeredUser = this.registerationUtil(UserRole.TRAINER, password);
+
+        ReqResDTO request = new ReqResDTO(
+            0, 
+            null, 
+            null, 
+            null, 
+            null, 
+            null, 
+            null,
+            null, 
+            null, 
+            null, 
+            registeredUser.getEmail(), 
+            password, 
+            null, 
+            null
+        );
+
+        ReqResDTO response = this.userManagementService.login(request);
+
+        Assert.isTrue(response.statusCode() == 200);
+    }
 }

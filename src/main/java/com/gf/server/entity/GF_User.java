@@ -19,10 +19,10 @@ import com.gf.server.enumeration.UserRole;
 @Entity
 @Table(name = "USERS")
 @Data
-public class User implements UserDetails{
+public class GF_User implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String lastName;
     private String firstName;
@@ -34,14 +34,25 @@ public class User implements UserDetails{
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.toString()));
     }
-    @Override
-    public String getPassword() {
-        // TODO: not this 
-        return "Nice try!";
-    }
+
     @Override
     public String getUsername() {
         return this.email;
     }
-    
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }
