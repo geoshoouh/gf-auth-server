@@ -20,6 +20,6 @@ public class UserRoleTests {
         Assert.isTrue(UserRole.stringToEnum(adminString) == UserRole.ADMIN, "UserRole.stringToEnum failed to convert " + adminString);
         Assert.isTrue(UserRole.stringToEnum(trainerString) == UserRole.TRAINER, "UserRole.stringToEnum failed to convert " + trainerString);
         Assert.isTrue(UserRole.stringToEnum(clientString) == UserRole.CLIENT, "UserRole.stringToEnum failed to convert " + clientString);
-        Assert.isTrue(UserRole.stringToEnum(incorrectString) == UserRole.CLIENT, "UserRole.stringToEnum failed to convert " + clientString);
+        Assert.isTrue(UserRole.stringToEnum(incorrectString) == UserRole.CLIENT, "UserRole.stringToEnum failed to convert " + incorrectString);
     }
 }
