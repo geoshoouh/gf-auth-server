@@ -3,6 +3,7 @@ package com.gf.server.service;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,6 +19,8 @@ import com.gf.server.util.JwtUtils;
 
 @Service
 public class GF_UserManagementService {
+
+    private static final Logger logger = Logger.getLogger(GF_UserManagementService.class.getName());
     
     @Autowired
     private UserRepository userRepository;
@@ -175,7 +178,7 @@ public class GF_UserManagementService {
 
         return response;
     }
-
+    
     public ReqResDTO getAllUsers() {
 
         int responseStatusCode = 500;
@@ -215,5 +218,25 @@ public class GF_UserManagementService {
         );
 
         return response;
+    }
+    
+    public boolean clearUserRepository() {
+        boolean retVal = false;
+
+        logger.info("Clearing User repository");
+
+        try {
+            this.userRepository.deleteAll();
+            retVal = true;
+        } catch (Exception e)
+        {
+            logger.severe(e.getMessage());
+        }
+
+        return retVal;
+    }
+
+    public Long userCount() {
+        return this.userRepository.count();
     }
 }
