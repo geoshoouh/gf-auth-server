@@ -1,6 +1,8 @@
 package com.gf.server.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -169,6 +171,47 @@ public class GF_UserManagementService {
             null, 
             null, 
             null
+        );
+
+        return response;
+    }
+
+    public ReqResDTO getAllUsers() {
+
+        int responseStatusCode = 500;
+        String responseErrorMessage = null;
+        String responseMessage = null;
+        List<User> responseUserList = new ArrayList<User>();
+
+        try {
+            List<User> result = userRepository.findAll();
+
+            if (!result.isEmpty()) {
+                responseStatusCode = 200;
+                responseMessage = "Success.";
+                responseUserList = result;
+            } else {
+                responseMessage = "No users found.";
+            }
+        } catch (Exception e) {
+            responseErrorMessage = e.getMessage();
+        }
+
+        ReqResDTO response = new ReqResDTO(
+            responseStatusCode, 
+            responseErrorMessage, 
+            responseMessage, 
+            null,
+            null,
+            null,
+            null,
+            null, 
+            null, 
+            null, 
+            null, 
+            null, 
+            null, 
+            responseUserList
         );
 
         return response;
