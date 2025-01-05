@@ -1,11 +1,14 @@
 package com.gf.server.service_tests;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.gf.server.dto.ReqResDTO;
+import com.gf.server.entity.User;
+import com.gf.server.enumeration.UserRole;
 import com.gf.server.service.GF_UserManagementService;
 
 import io.jsonwebtoken.lang.Assert;
@@ -16,6 +19,46 @@ class GF_UserManagementServiceTests {
 	@Autowired
     GF_UserManagementService userManagementService;
 
+
+    private User registerationUtil(UserRole role) {
+
+        String roleString;
+
+        switch (role) {
+        case ADMIN:
+            roleString = "Admin";
+            break;
+        case TRAINER:
+            roleString = "Trainer";
+            break;
+        case CLIENT:
+            roleString = "Client";
+            break;
+        default:
+            roleString = "Client";
+        }
+
+        ReqResDTO request = new ReqResDTO(
+            0, 
+            null, 
+            null, 
+            null, 
+            null, 
+            null, 
+            RandomStringUtils.randomAlphabetic(7),
+            RandomStringUtils.randomAlphabetic(7), 
+            null, 
+            roleString, 
+            RandomStringUtils.randomAlphanumeric(7) + "@" + RandomStringUtils.randomAlphabetic(4) + ".com", 
+            RandomStringUtils.randomAlphanumeric(15), 
+            null, 
+            null
+        );
+
+        ReqResDTO response = this.userManagementService.register(request);
+
+        return response.user();
+    }
     
     @AfterEach
     void clearUserRepository() {
