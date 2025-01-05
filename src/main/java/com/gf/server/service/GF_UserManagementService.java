@@ -1,7 +1,10 @@
 package com.gf.server.service;
 
+import java.util.HashMap;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -27,8 +30,6 @@ public class GF_UserManagementService {
     private PasswordEncoder passwordEncoder;
 
     public ReqResDTO register(ReqResDTO request) {
-
-        ReqResDTO response;
         
         int responseStatusCode = 500;
         String responseMessage = null;
@@ -56,7 +57,7 @@ public class GF_UserManagementService {
             responseErrorMessage = e.getMessage();
         }
 
-        response = new ReqResDTO(
+        ReqResDTO response = new ReqResDTO(
             responseStatusCode, 
             responseErrorMessage, 
             responseMessage, 
@@ -75,5 +76,101 @@ public class GF_UserManagementService {
 
         return response;
 
+    }
+
+    public ReqResDTO login(ReqResDTO request) {
+        
+        int responseStatusCode = 500;
+        String responseErrorMessage = null;
+        String responseToken = null;
+        String responseRefreshToken = null;
+        String responseExpirationTime = null;
+        String responseMessage = null;
+
+        try {
+            this.authenticationManager
+                .authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                        request.email(), 
+                        request.password())
+                    );
+            var user = userRepository.findByEmail(request.email()).orElseThrow();
+            var jwt = jwtUtils.generateToken(user);
+            var refreshToken = jwtUtils.generateRefreshToken(new HashMap<>(), user);
+
+            responseStatusCode = 200;
+            responseToken = jwt;
+            responseRefreshToken = refreshToken;
+            responseExpirationTime = "24Hrs";
+            responseMessage = "Successfully logged in.";
+            
+        } catch (Exception e) {
+            responseErrorMessage = e.getMessage();
+        }
+
+        ReqResDTO response = new ReqResDTO(
+            responseStatusCode, 
+            responseErrorMessage, 
+            responseMessage, 
+            responseToken, 
+            responseRefreshToken, 
+            responseExpirationTime, 
+            null,
+            null, 
+            null, 
+            null, 
+            null, 
+            null, 
+            null, 
+            null
+        );
+
+        return response;
+    }
+
+    public ReqResDTO refreshToken(ReqResDTO request) {
+
+        int responseStatusCode = 500;
+        String responseErrorMessage = null;
+        String responseToken = null;
+        String responseRefreshToken = null;
+        String responseExpirationTime = null;
+        String responseMessage = null;
+
+        try {
+            String userEmail = jwtUtils.extractUsername(request.token());
+            User user = userRepository.findByEmail(userEmail).orElseThrow();
+
+            if (jwtUtils.tokenValid(request.refreshToken(), user)) {
+                var jwt = jwtUtils.generateToken(user);
+
+                responseStatusCode = 200;
+                responseToken = jwt;
+                responseRefreshToken = request.token();
+                responseExpirationTime = "24Hrs";
+                responseMessage = "Successfully refreshed token.";
+            }
+        } catch (Exception e) {
+            responseErrorMessage = e.getMessage();
+        }
+
+        ReqResDTO response = new ReqResDTO(
+            responseStatusCode, 
+            responseErrorMessage, 
+            responseMessage, 
+            responseToken, 
+            responseRefreshToken, 
+            responseExpirationTime, 
+            null,
+            null, 
+            null, 
+            null, 
+            null, 
+            null, 
+            null, 
+            null
+        );
+
+        return response;
     }
 }
