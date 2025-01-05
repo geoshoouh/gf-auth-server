@@ -36,13 +36,12 @@ public class User implements UserDetails{
     }
     @Override
     public String getPassword() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getPassword'");
+        // TODO: not this 
+        return "Nice try!";
     }
     @Override
     public String getUsername() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getUsername'");
+        return this.email;
     }
     
 }
