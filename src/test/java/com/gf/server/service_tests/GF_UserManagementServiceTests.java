@@ -121,5 +121,7 @@ class GF_UserManagementServiceTests {
         ReqResDTO response = this.userManagementService.login(request);
 
         Assert.isTrue(response.statusCode() == 200);
+        Assert.notNull(response.token());
+        Assert.notNull(response.refreshToken());
     }
 }
