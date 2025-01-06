@@ -194,4 +194,34 @@ class GF_UserManagementServiceTests {
         Assert.eq(response.statusCode(), 200, "Status code was " + response.statusCode() + ", expected " + 200);
         Assert.eq(this.userManagementService.userCount(), 0L, "User count was " + this.userManagementService.userCount() + ", expected " + 0);
     }
+
+    @Test
+    void updateUserUpdatesUser() {
+        GF_User registeredUser = this.registrationUtil(UserRole.TRAINER);
+
+        GF_User updatedUser = new GF_User();
+
+        String updatedEmail = RandomStringUtils.randomAlphabetic(5) + "@" + RandomStringUtils.randomAlphabetic(5) + ".com";
+        String updatedFirstName = RandomStringUtils.randomAlphabetic(5);
+        String updatedLastName = RandomStringUtils.randomAlphabetic(5);
+        UserRole updatedRole = UserRole.ADMIN;
+        String updatedPassword = RandomStringUtils.randomAlphanumeric(15);
+
+        String existingPassword = registeredUser.getPassword();
+
+        updatedUser.setEmail(updatedEmail);
+        updatedUser.setFirstName(updatedFirstName);
+        updatedUser.setLastName(updatedLastName);
+        updatedUser.setRole(updatedRole);
+        updatedUser.setPassword(updatedPassword);
+
+        ReqResDTO response = this.userManagementService.updateUser(registeredUser.getId(), updatedUser);
+
+        Assert.eq(response.statusCode(), 200, "Status code was " + response.statusCode() + ", expected " + 200);
+        Assert.eq(response.user().getEmail(), updatedEmail, "Expected " + updatedEmail + ", was " + response.user().getEmail());
+        Assert.eq(response.user().getFirstName(), updatedFirstName, "Expected " + updatedFirstName + ", was " + response.user().getFirstName());
+        Assert.eq(response.user().getLastName(), updatedLastName, "Expected " + updatedLastName + ", was " + response.user().getLastName());
+        Assert.eq(response.user().getRole(), updatedRole, "Expected " + updatedRole + ", was " + response.user().getRole());
+        Assert.isTrue(response.user().getPassword() != existingPassword);
+    }
 }
