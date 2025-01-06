@@ -48,4 +48,9 @@ public class GF_UserManagementController {
     public ResponseEntity<ReqResDTO> updateUser(@PathVariable Long userId, @RequestBody ReqResDTO body) {
         return ResponseEntity.ok(this.userManagementService.updateUser(userId, body.user()));
     }
+
+    @GetMapping("/ping")
+    public ResponseEntity<String> pingAuthenticationServer() {
+        return ResponseEntity.ok("User Authentication Server is HEALTHY.");
+    }
 }
