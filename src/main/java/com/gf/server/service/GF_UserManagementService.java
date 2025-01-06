@@ -239,4 +239,38 @@ public class GF_UserManagementService {
     public Long userCount() {
         return this.userRepository.count();
     }
+
+    public ReqResDTO getUserById(Long id) {
+        GF_User responseUser = null;
+        int responseStatusCode = 500;
+        String responseMessage = null;
+        String responseErrorMessage = null;
+
+        try {
+            responseUser = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found."));
+            responseStatusCode = 200;
+            responseMessage = "User with id " + id + " found successfully.";
+        } catch (Exception e) {
+            responseErrorMessage = e.getMessage();
+        }
+
+        ReqResDTO response = new ReqResDTO(
+            responseStatusCode, 
+            responseErrorMessage, 
+            responseMessage, 
+            null,
+            null,
+            null,
+            null,
+            null, 
+            null, 
+            null, 
+            null, 
+            null, 
+            responseUser, 
+            null
+        );
+
+        return response;
+    }
 }
