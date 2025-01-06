@@ -30,33 +30,35 @@ jobs:
     - name: Build with Maven
       run: mvn -B package --file pom.xml
 
-  containerize:
-    permissions: write-all
-    runs-on: ubuntu-latest
-    needs: build
+# Currently no Github-hosted ARM runners; need to push manually in the meantime
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+  #containerize:
+  #  permissions: write-all
+  #  runs-on: ubuntu-latest
+  #  needs: build
 
-      - name: Build Docker image
-        run: |
-          docker build --platform linux/arm64 -t gf-auth-server:latest . --tag image
+  #  steps:
+  #    - name: Checkout repository
+  #      uses: actions/checkout@v3
 
-      - name: Log into registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io/geoshoouh -u geoshoouh --password-stdin
+  #    - name: Build Docker image
+  #      run: |
+  #        docker build -t gf-auth-server:latest . --tag image
 
-      - name: Push image
-        run: |
-          IMAGE_ID=ghcr.io/geoshoouh/gf-auth-server
-          # Strip git ref prefix from version
-          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
-          # Strip "v" prefix from tag name
-          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
-          # Use Docker `latest` tag convention
-          [ "$VERSION" == "master" ] && VERSION=latest
-          echo IMAGE_ID=$IMAGE_ID
-          echo VERSION=$VERSION
+  #    - name: Log into registry
+  #      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io/geoshoouh -u geoshoouh --password-stdin
 
-          docker tag image $IMAGE_ID:$VERSION
-          docker push $IMAGE_ID:$VERSION
+  #    - name: Push image
+  #      run: |
+  #        IMAGE_ID=ghcr.io/geoshoouh/gf-auth-server
+  #        # Strip git ref prefix from version
+  #        VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+  #        # Strip "v" prefix from tag name
+  #        [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+  #        # Use Docker `latest` tag convention
+  #        [ "$VERSION" == "master" ] && VERSION=latest
+  #        echo IMAGE_ID=$IMAGE_ID
+  #        echo VERSION=$VERSION
+
+  #        docker tag image $IMAGE_ID:$VERSION
+  #        docker push $IMAGE_ID:$VERSION
