@@ -23,7 +23,7 @@ import com.gf.server.enumeration.UserRole;
 public class GF_User implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
     
     @Column(unique = true)
