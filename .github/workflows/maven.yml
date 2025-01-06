@@ -40,14 +40,14 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t gf-auth-server:latest .
+          docker build -t gf-auth-server:latest . --tag image
 
       - name: Log into registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io/geoshoouh -u geoshoouh --password-stdin
 
       - name: Push image
         run: |
-          IMAGE_ID=ghcr.io.geoshoouh/gf-auth-server
+          IMAGE_ID=ghcr.io/geoshoouh/gf-auth-server
           # Strip git ref prefix from version
           VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
           # Strip "v" prefix from tag name
