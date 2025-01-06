@@ -327,9 +327,22 @@ public class GF_UserManagementService {
                 existingUser.setFirstName(updatedUser.getFirstName());
                 existingUser.setLastName(updatedUser.getLastName());
                 existingUser.setRole(updatedUser.getRole());
+
+                if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
+                    existingUser.setPassword(passwordEncoder.encode(updatedUser.getPassword()));
+                }
+
+                GF_User savedUser = userRepository.save(existingUser);
+                responseStatusCode = 200;
+                responseUser = savedUser;
+                responseMessage = "User updated successfully.";
+            } else {
+                responseStatusCode = 404;
+                responseMessage = "User not found for update.";
             }
         } catch (Exception e) {
-
+            responseStatusCode = 500;
+            responseErrorMessage = e.getMessage();
         }
 
         ReqResDTO response = new ReqResDTO(
