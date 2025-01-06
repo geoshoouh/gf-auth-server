@@ -41,7 +41,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker buildx build --platform linux/amd64,linux/arm64 -t gf-auth-server:latest . --tag image
+          docker build --platform linux/arm64 -t gf-auth-server:latest . --tag image
 
       - name: Log into registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io/geoshoouh -u geoshoouh --password-stdin
