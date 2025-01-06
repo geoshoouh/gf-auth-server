@@ -19,7 +19,11 @@ class GF_UserManagementServiceTests {
 	@Autowired
     GF_UserManagementService userManagementService;
 
-    private GF_User registerationUtil(UserRole role, String password) {
+    private GF_User registrationUtil(UserRole role) {
+        return this.registrationUtil(role, RandomStringUtils.randomAlphanumeric(15));
+    }
+
+    private GF_User registrationUtil(UserRole role, String password) {
 
         String roleString;
 
@@ -95,7 +99,7 @@ class GF_UserManagementServiceTests {
     void registeredUserCanLogin() {
 
         String password = "my-secure-password";
-        GF_User registeredUser = this.registerationUtil(UserRole.TRAINER, password);
+        GF_User registeredUser = this.registrationUtil(UserRole.TRAINER, password);
 
         ReqResDTO request = new ReqResDTO(
             0, 
@@ -126,7 +130,7 @@ class GF_UserManagementServiceTests {
 
         String password = "my-secure-password";
 
-        GF_User registeredUser = this.registerationUtil(UserRole.TRAINER, password);
+        GF_User registeredUser = this.registrationUtil(UserRole.TRAINER, password);
 
         ReqResDTO loginRequest = new ReqResDTO(
             0, 
@@ -169,5 +173,15 @@ class GF_UserManagementServiceTests {
         Assert.eq(refreshTokenResponse.statusCode(), 200, "Expected 200, was " + refreshTokenResponse.statusCode());
         Assert.notNull(refreshTokenResponse.token());
         Assert.notNull(refreshTokenResponse.refreshToken());
+    }
+
+    @Test  
+    void getUserByIdGetsUserById() {
+        GF_User registeredUser = this.registrationUtil(UserRole.TRAINER);
+
+        GF_User foundUser = this.userManagementService.getUserById(registeredUser.getId()).user();
+
+        Assert.notNull(foundUser);
+        Assert.eq(registeredUser.getId(), foundUser.getId(), "Registered: " + registeredUser.getId() + "; Found: " + foundUser.getId());
     }
 }
