@@ -17,7 +17,6 @@ public record ReqResDTO (
     String expirationTime,
     String lastname,
     String firstName,
-    String city,
     String role,
     String email,
     String password,

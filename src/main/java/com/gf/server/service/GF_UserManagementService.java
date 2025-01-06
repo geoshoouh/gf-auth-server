@@ -69,7 +69,6 @@ public class GF_UserManagementService {
             responseMessage, 
             null, 
             null, 
-            null, 
             null,
             null, 
             null, 
@@ -127,7 +126,6 @@ public class GF_UserManagementService {
             null, 
             null, 
             null, 
-            null, 
             null
         );
 
@@ -173,7 +171,6 @@ public class GF_UserManagementService {
             null, 
             null, 
             null, 
-            null, 
             null
         );
 
@@ -209,7 +206,6 @@ public class GF_UserManagementService {
             null,
             null,
             null,
-            null, 
             null, 
             null, 
             null, 
@@ -262,7 +258,6 @@ public class GF_UserManagementService {
             null,
             null,
             null,
-            null,
             null, 
             null, 
             null, 
@@ -303,13 +298,53 @@ public class GF_UserManagementService {
             null,
             null,
             null,
+            null, 
+            null, 
+            null, 
+            null, 
+            null, 
+            null, 
+            null
+        );
+
+        return response;
+    }
+
+    public ReqResDTO updateUser(Long userId, GF_User updatedUser) {
+
+        int responseStatusCode = 500;
+        String responseMessage = null;
+        String responseErrorMessage = null;
+        GF_User responseUser = null;
+
+        try {
+            Optional<GF_User> userOptional = userRepository.findById(userId);
+
+            if (userOptional.isPresent()) {
+                GF_User existingUser = userOptional.get();
+
+                existingUser.setEmail(updatedUser.getEmail());
+                existingUser.setFirstName(updatedUser.getFirstName());
+                existingUser.setLastName(updatedUser.getLastName());
+                existingUser.setRole(updatedUser.getRole());
+            }
+        } catch (Exception e) {
+
+        }
+
+        ReqResDTO response = new ReqResDTO(
+            responseStatusCode, 
+            responseErrorMessage, 
+            responseMessage, 
+            null,
+            null,
+            null,
             null,
             null, 
             null, 
             null, 
             null, 
-            null, 
-            null, 
+            responseUser, 
             null
         );
 
