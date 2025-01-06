@@ -103,13 +103,36 @@ public class GF_UserManagementControllerTests {
             null
         );
 
-        System.out.println(gson.toJson(request));
         this.mockMvc.perform(post("/auth/register")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(gson.toJson(request)))
-                    .andExpect(status().isOk())
-                    .andReturn()
-                    .getResponse()
-                    .getContentAsString();
+                    .andExpect(status().isOk());
+    }
+
+    @Test
+    void restControllerLogsInUsers() throws Exception {
+        String registeredUserPassword = "86p@55w0rd64";
+        GF_User registeredUser = this.registrationUtil(UserRole.TRAINER, registeredUserPassword);
+
+        ReqResDTO request = new ReqResDTO(
+            0, 
+            null, 
+            null, 
+            null, 
+            null, 
+            null,
+            null, 
+            null, 
+            null, 
+            registeredUser.getEmail(), 
+            registeredUserPassword, 
+            null, 
+            null
+        );
+
+        this.mockMvc.perform(post("/auth/login")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(gson.toJson(request)))
+                    .andExpect(status().isOk());
     }
 }
