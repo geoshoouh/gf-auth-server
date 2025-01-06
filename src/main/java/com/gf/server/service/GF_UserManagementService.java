@@ -3,6 +3,7 @@ package com.gf.server.service;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -268,6 +269,47 @@ public class GF_UserManagementService {
             null, 
             null, 
             responseUser, 
+            null
+        );
+
+        return response;
+    }
+
+    public ReqResDTO deleteUserById(Long id) {
+        int responseStatusCode = 500;
+        String responseMessage = null;
+        String responseErrorMessage = null;
+
+        try {
+            Optional<GF_User> userOptional = this.userRepository.findById(id);
+
+            if (userOptional.isPresent()) {
+                this.userRepository.deleteById(id);
+
+                responseStatusCode = 200;
+                responseMessage = "User deleted successfully.";
+            } else {
+                responseStatusCode = 404;
+                responseMessage = "User not found.";
+            }
+        } catch (Exception e) {
+            responseErrorMessage = e.getMessage();
+        }
+
+        ReqResDTO response = new ReqResDTO(
+            responseStatusCode, 
+            responseErrorMessage, 
+            responseMessage, 
+            null,
+            null,
+            null,
+            null,
+            null, 
+            null, 
+            null, 
+            null, 
+            null, 
+            null, 
             null
         );
 

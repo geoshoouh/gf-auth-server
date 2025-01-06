@@ -184,4 +184,19 @@ class GF_UserManagementServiceTests {
         Assert.notNull(foundUser);
         Assert.eq(registeredUser.getId(), foundUser.getId(), "Registered: " + registeredUser.getId() + "; Found: " + foundUser.getId());
     }
+
+    @Test
+    void deleteUserByIdDeletesUser() {
+
+        Assert.eq(this.userManagementService.userCount(), 0L, "User count was " + this.userManagementService.userCount() + ", expected " + 0);
+
+        GF_User registeredUser = this.registrationUtil(UserRole.TRAINER);
+
+        Assert.eq(this.userManagementService.userCount(), 1L, "User count was " + this.userManagementService.userCount() + ", expected " + 1);
+
+        ReqResDTO response = this.userManagementService.deleteUserById(registeredUser.getId());
+
+        Assert.eq(response.statusCode(), 200, "Status code was " + response.statusCode() + ", expected " + 200);
+        Assert.eq(this.userManagementService.userCount(), 0L, "User count was " + this.userManagementService.userCount() + ", expected " + 0);
+    }
 }
