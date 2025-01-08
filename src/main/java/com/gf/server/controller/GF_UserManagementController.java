@@ -51,6 +51,6 @@ public class GF_UserManagementController {
 
     @GetMapping("/ping")
     public ResponseEntity<String> pingAuthenticationServer() {
-        return ResponseEntity.ok("User Authentication Server is HEALTHY.\n");
+        return ResponseEntity.ok("Genesis Fitness User Authentication Server is HEALTHY.\n");
     }
 }
