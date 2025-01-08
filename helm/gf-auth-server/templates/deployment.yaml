@@ -50,6 +50,32 @@ spec:
           volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          env:
+            - name: POSTGRES_HOST 
+              valueFrom:
+                secretKeyRef:
+                  name: db-cred
+                  key: POSTGRES_HOST
+            - name: POSTGRES_PW
+              valueFrom:
+                secretKeyRef:
+                  name: db-cred
+                  key: POSTGRES_PW
+            - name: POSTGRES_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: db-cred
+                  key: POSTGRES_PORT
+            - name: POSTGRES_DB_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: db-cred
+                  key: POSTGRES_DB_NAME
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: db-cred
+                  key: POSTGRES_USER
       {{- with .Values.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}
