@@ -47,8 +47,10 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: maven-build-artifacts
+          path: .
       - name: Build Docker image
         run: |
+          export DOCKER_DEFAULT_PLATFORM=linux/arm64
           docker build -t gf-auth-server:latest . --tag image
 
       - name: Log into registry
