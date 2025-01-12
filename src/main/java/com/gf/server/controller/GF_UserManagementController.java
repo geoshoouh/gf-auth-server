@@ -1,11 +1,16 @@
 package com.gf.server.controller;
 
+import javax.security.auth.login.FailedLoginException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gf.server.dto.ReqResDTO;
 import com.gf.server.service.GF_UserManagementService;
+
+import jakarta.security.auth.message.AuthException;
+
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,12 +30,12 @@ public class GF_UserManagementController {
     }
     
     @PostMapping("/auth/login")
-    public ResponseEntity<ReqResDTO> login(@RequestBody ReqResDTO request) {
+    public ResponseEntity<ReqResDTO> login(@RequestBody ReqResDTO request) throws FailedLoginException {
         return ResponseEntity.ok(this.userManagementService.login(request));
     }
 
     @PostMapping("/auth/refresh")
-    public ResponseEntity<ReqResDTO> refreshToken(@RequestBody ReqResDTO request) {
+    public ResponseEntity<ReqResDTO> refreshToken(@RequestBody ReqResDTO request) throws AuthException {
         return ResponseEntity.ok(this.userManagementService.refreshToken(request));
     }
 

@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 
+import javax.security.auth.login.FailedLoginException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,8 +17,12 @@ import org.springframework.stereotype.Service;
 import com.gf.server.dto.ReqResDTO;
 import com.gf.server.entity.GF_User;
 import com.gf.server.enumeration.UserRole;
+import com.gf.server.exceptions.FailedSaveException;
 import com.gf.server.repository.UserRepository;
 import com.gf.server.util.JwtUtils;
+
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.security.auth.message.AuthException;
 
 @Service
 public class GF_UserManagementService {
@@ -35,33 +41,31 @@ public class GF_UserManagementService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public ReqResDTO register(ReqResDTO request) {
+    public ReqResDTO register(ReqResDTO request) throws FailedSaveException {
         
         int responseStatusCode = 500;
         String responseMessage = null;
         String responseErrorMessage = null;
         GF_User responseUser = null;
         
-        try {
-            GF_User user = new GF_User();
+        GF_User user = new GF_User();
 
-            user.setEmail(request.email());
-            user.setFirstName(request.firstName());
-            user.setLastName(request.lastname());
-            user.setRole(UserRole.stringToEnum(request.role()));
-            user.setPassword(passwordEncoder.encode(request.password()));
+        user.setEmail(request.email());
+        user.setFirstName(request.firstName());
+        user.setLastName(request.lastname());
+        user.setRole(UserRole.stringToEnum(request.role()));
+        user.setPassword(passwordEncoder.encode(request.password()));
 
-            GF_User userDB_Result = userRepository.save(user);
+        GF_User userDB_Result = userRepository.save(user);
 
-            if (userDB_Result.getId() > 0) {
-                responseStatusCode = 200;
-                responseMessage = "User saved successfully.";
-                responseUser = userDB_Result;
-
-            }
-        } catch (Exception e) {
-            responseErrorMessage = e.getMessage();
+        if (userDB_Result.getId() > 0) {
+            responseStatusCode = 200;
+            responseMessage = "User saved successfully.";
+            responseUser = userDB_Result;
+        } else {
+            throw new FailedSaveException();
         }
+        
 
         ReqResDTO response = new ReqResDTO(
             responseStatusCode, 
@@ -83,36 +87,31 @@ public class GF_UserManagementService {
 
     }
 
-    public ReqResDTO login(ReqResDTO request) {
+    public ReqResDTO login(ReqResDTO request) throws FailedLoginException {
         
-        int responseStatusCode = 500;
+        int responseStatusCode = 401;
         String responseErrorMessage = null;
         String responseToken = null;
         String responseRefreshToken = null;
         String responseExpirationTime = null;
         String responseMessage = null;
 
-        try {
-            this.authenticationManager
-                .authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                        request.email(), 
-                        request.password())
-                    );
-            var user = userRepository.findByEmail(request.email()).orElseThrow();
-            var jwt = jwtUtils.generateToken(user);
-            var refreshToken = jwtUtils.generateRefreshToken(new HashMap<>(), user);
+        this.authenticationManager
+            .authenticate(
+                new UsernamePasswordAuthenticationToken(
+                    request.email(), 
+                    request.password())
+                );
+        var user = userRepository.findByEmail(request.email()).orElseThrow(() -> new FailedLoginException());
+        var jwt = jwtUtils.generateToken(user);
+        var refreshToken = jwtUtils.generateRefreshToken(new HashMap<>(), user);
 
-            responseStatusCode = 200;
-            responseToken = jwt;
-            responseRefreshToken = refreshToken;
-            responseExpirationTime = "24Hrs";
-            responseMessage = "Successfully logged in.";
+        responseStatusCode = 200;
+        responseToken = jwt;
+        responseRefreshToken = refreshToken;
+        responseExpirationTime = "24Hrs";
+        responseMessage = "Successfully logged in.";
     
-        } catch (Exception e) {
-            responseErrorMessage = e.getMessage();
-        }
-
         ReqResDTO response = new ReqResDTO(
             responseStatusCode, 
             responseErrorMessage, 
@@ -132,9 +131,9 @@ public class GF_UserManagementService {
         return response;
     }
 
-    public ReqResDTO refreshToken(ReqResDTO request) {
+    public ReqResDTO refreshToken(ReqResDTO request) throws AuthException {
 
-        int responseStatusCode = 500;
+        int responseStatusCode = 401;
         String responseErrorMessage = null;
         String responseToken = null;
         String responseRefreshToken = null;
@@ -143,7 +142,7 @@ public class GF_UserManagementService {
 
         try {
             String userEmail = jwtUtils.extractUsername(request.token());
-            GF_User user = userRepository.findByEmail(userEmail).orElseThrow();
+            GF_User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new AuthException());
 
             if (jwtUtils.tokenValid(request.refreshToken(), user)) {
                 var jwt = jwtUtils.generateToken(user);
@@ -184,19 +183,15 @@ public class GF_UserManagementService {
         String responseMessage = null;
         List<GF_User> responseUserList = new ArrayList<GF_User>();
 
-        try {
-            List<GF_User> result = userRepository.findAll();
+        List<GF_User> result = userRepository.findAll();
 
-            if (!result.isEmpty()) {
-                responseStatusCode = 200;
-                responseMessage = "Success.";
-                responseUserList = result;
-            } else {
-                responseMessage = "No users found.";
-            }
-        } catch (Exception e) {
-            responseErrorMessage = e.getMessage();
-        }
+        if (!result.isEmpty()) {
+            responseStatusCode = 200;
+            responseMessage = "Success.";
+            responseUserList = result;
+        } else {
+            responseMessage = "No users found.";
+        }       
 
         ReqResDTO response = new ReqResDTO(
             responseStatusCode, 
@@ -222,13 +217,8 @@ public class GF_UserManagementService {
 
         logger.info("Clearing User repository");
 
-        try {
-            this.userRepository.deleteAll();
-            retVal = true;
-        } catch (Exception e)
-        {
-            logger.severe(e.getMessage());
-        }
+        this.userRepository.deleteAll();
+        retVal = true;
 
         return retVal;
     }
@@ -270,25 +260,23 @@ public class GF_UserManagementService {
         return response;
     }
 
-    public ReqResDTO deleteUserById(Long id) {
-        int responseStatusCode = 500;
+    public ReqResDTO deleteUserById(Long id) throws EntityNotFoundException {
+        int responseStatusCode = 404;
         String responseMessage = null;
         String responseErrorMessage = null;
 
-        try {
-            Optional<GF_User> userOptional = this.userRepository.findById(id);
+        Optional<GF_User> userOptional = this.userRepository.findById(id);
 
-            if (userOptional.isPresent()) {
-                this.userRepository.deleteById(id);
+        if (userOptional.isPresent()) {
+            this.userRepository.deleteById(id);
 
-                responseStatusCode = 200;
-                responseMessage = "User deleted successfully.";
-            } else {
-                responseStatusCode = 404;
-                responseMessage = "User not found.";
-            }
-        } catch (Exception e) {
-            responseErrorMessage = e.getMessage();
+            responseStatusCode = 200;
+            responseMessage = "User deleted successfully.";
+        } else {
+            responseStatusCode = 404;
+            responseMessage = "User not found.";
+
+            throw new EntityNotFoundException();
         }
 
         ReqResDTO response = new ReqResDTO(
@@ -310,9 +298,9 @@ public class GF_UserManagementService {
         return response;
     }
 
-    public ReqResDTO updateUser(Long userId, GF_User updatedUser) {
+    public ReqResDTO updateUser(Long userId, GF_User updatedUser) throws EntityNotFoundException {
 
-        int responseStatusCode = 500;
+        int responseStatusCode = 404;
         String responseMessage = null;
         String responseErrorMessage = null;
         GF_User responseUser = null;
@@ -339,6 +327,8 @@ public class GF_UserManagementService {
             } else {
                 responseStatusCode = 404;
                 responseMessage = "User not found for update.";
+
+                throw new EntityNotFoundException();
             }
         } catch (Exception e) {
             responseStatusCode = 500;

@@ -1,5 +1,7 @@
 package com.gf.server.service_tests;
 
+import javax.security.auth.login.FailedLoginException;
+
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -12,6 +14,7 @@ import com.gf.server.enumeration.UserRole;
 import com.gf.server.service.GF_UserManagementService;
 
 import io.jsonwebtoken.lang.Assert;
+import jakarta.security.auth.message.AuthException;
 
 @SpringBootTest
 class GF_UserManagementServiceTests {
@@ -94,7 +97,7 @@ class GF_UserManagementServiceTests {
     }
 
     @Test  
-    void registeredUserCanLogin() {
+    void registeredUserCanLogin() throws FailedLoginException {
 
         String password = "my-secure-password";
         GF_User registeredUser = this.registrationUtil(UserRole.TRAINER, password);
@@ -123,7 +126,7 @@ class GF_UserManagementServiceTests {
     }
 
     @Test
-    void userCanRefreshTokenWork() {
+    void userCanRefreshTokenWork() throws FailedLoginException, AuthException {
 
         String password = "my-secure-password";
 
