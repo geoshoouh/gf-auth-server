@@ -124,7 +124,7 @@ public class GF_UserManagementService {
             null, 
             null, 
             null, 
-            null, 
+            user, 
             null
         );
 
