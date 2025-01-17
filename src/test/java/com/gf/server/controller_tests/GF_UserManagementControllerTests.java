@@ -20,6 +20,8 @@ import com.gf.server.enumeration.UserRole;
 import com.gf.server.service.GF_UserManagementService;
 import com.google.gson.Gson;
 
+import io.jsonwebtoken.lang.Assert;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 public class GF_UserManagementControllerTests {
@@ -130,13 +132,18 @@ public class GF_UserManagementControllerTests {
             null
         );
 
-        this.mockMvc.perform(post("/auth/login")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(gson.toJson(request)))
-                    .andExpect(status().isOk());
-    }
+        ReqResDTO response = gson.fromJson(
+            this.mockMvc.perform(post("/auth/login").contentType(MediaType.APPLICATION_JSON)
+                                                                .content(gson.toJson(request)))
+                                                                .andExpect(status().isOk())
+                                                                .andReturn()
+                                                                .getResponse()
+                                                                .getContentAsString(), 
+                                                                ReqResDTO.class
+        );
 
-    @Test
+        Assert.notNull(response.user().getRole(), "Unexpected role for user in response");
+    }
     void canPingRestController() throws Exception {
         this.mockMvc.perform(get("/ping")).andExpect(status().isOk());
     }
