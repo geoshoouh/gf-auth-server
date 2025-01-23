@@ -6,12 +6,12 @@ metadata:
     {{- include "gf-auth-server.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
+  clusterIP: {{ .Values.service.clusterIP }}
   ports:
     - port: {{ .Values.service.port }}
       targetPort: http
       protocol: TCP
       name: http
-      clusterIP: {{ .Values.service.clusterIP }}
 
   selector:
     {{- include "gf-auth-server.selectorLabels" . | nindent 4 }}
