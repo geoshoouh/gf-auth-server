@@ -118,9 +118,6 @@ volumeMounts: []
 #   mountPath: "/etc/foo"
 #   readOnly: true
 
-nodeSelector: 
-  kubernetes.io/hostname: "rpi2"
-
 tolerations: []
 
 affinity: {}
