@@ -56,6 +56,11 @@ public class GF_UserManagementController {
         return ResponseEntity.ok(this.userManagementService.updateUser(userId, body.user()));
     }
 
+    @PostMapping("/admin/delete/{userId}")
+    public ResponseEntity<ReqResDTO> deleteUser(@PathVariable Long userId, @RequestBody ReqResDTO body) {
+        return ResponseEntity.ok(this.userManagementService.deleteUserById(userId));
+    }
+
     @GetMapping("/ping")
     public ResponseEntity<String> pingAuthenticationServer() {
         return ResponseEntity.ok("Genesis Fitness User Authentication Server is HEALTHY.\n");
