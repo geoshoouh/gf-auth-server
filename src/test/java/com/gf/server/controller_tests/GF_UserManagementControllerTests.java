@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -144,7 +145,79 @@ public class GF_UserManagementControllerTests {
 
         Assert.notNull(response.user().getRole(), "Unexpected role for user in response");
     }
+
+    @Test
     void canPingRestController() throws Exception {
         this.mockMvc.perform(get("/ping")).andExpect(status().isOk());
+    }
+
+    @Test
+    void adminCanDeleteUser() throws Exception {
+
+        String adminUserPass = "p@$$w0rd";
+        GF_User adminUser = registrationUtil(UserRole.ADMIN, adminUserPass);
+        GF_User trainerUser = registrationUtil(UserRole.TRAINER);
+
+        ReqResDTO request = new ReqResDTO(
+            0, 
+            null, 
+            null, 
+            null, 
+            null, 
+            null,
+            null, 
+            null, 
+            null, 
+            adminUser.getEmail(), 
+            adminUserPass, 
+            null, 
+            null
+        );
+
+        String adminToken = userManagementService.login(request).token();
+
+        gson.fromJson(
+            this.mockMvc.perform(post("/admin/user/delete/{id}", trainerUser.getId()).with(SecurityMockMvcRequestPostProcessors.jwt()).header("Authorization", "Bearer " + adminToken))
+                                                                                                 .andExpect(status().isOk())
+                                                                                                 .andReturn()
+                                                                                                 .getResponse()
+                                                                                                 .getContentAsString(),     
+                                                                                                 ReqResDTO.class
+            );
+    }
+
+    @Test
+    void trainerCannotDeleteUser() throws Exception {
+
+        String trainerUserPass = "p@$$w0rd";
+        GF_User trainerUser = registrationUtil(UserRole.TRAINER, trainerUserPass);
+        GF_User user = registrationUtil(UserRole.TRAINER);
+
+        ReqResDTO request = new ReqResDTO(
+            0, 
+            null, 
+            null, 
+            null, 
+            null, 
+            null,
+            null, 
+            null, 
+            null, 
+            trainerUser.getEmail(), 
+            trainerUserPass, 
+            null, 
+            null
+        );
+
+        String trainerToken = userManagementService.login(request).token();
+
+        gson.fromJson(
+            this.mockMvc.perform(post("/admin/user/delete/{id}", user.getId()).with(SecurityMockMvcRequestPostProcessors.jwt()).header("Authorization", "Bearer " + trainerToken))
+                                                                                                 .andExpect(status().isForbidden())
+                                                                                                 .andReturn()
+                                                                                                 .getResponse()
+                                                                                                 .getContentAsString(),     
+                                                                                                 ReqResDTO.class
+            );
     }
 }
