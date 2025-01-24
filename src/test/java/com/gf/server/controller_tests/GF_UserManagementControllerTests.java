@@ -177,7 +177,7 @@ public class GF_UserManagementControllerTests {
         String adminToken = userManagementService.login(request).token();
 
         gson.fromJson(
-            this.mockMvc.perform(post("/admin/user/delete/{id}", trainerUser.getId()).with(SecurityMockMvcRequestPostProcessors.jwt()).header("Authorization", "Bearer " + adminToken))
+            this.mockMvc.perform(post("/admin/user/delete/{email}", trainerUser.getEmail()).with(SecurityMockMvcRequestPostProcessors.jwt()).header("Authorization", "Bearer " + adminToken))
                                                                                                  .andExpect(status().isOk())
                                                                                                  .andReturn()
                                                                                                  .getResponse()
@@ -212,7 +212,7 @@ public class GF_UserManagementControllerTests {
         String trainerToken = userManagementService.login(request).token();
 
         gson.fromJson(
-            this.mockMvc.perform(post("/admin/user/delete/{id}", user.getId()).with(SecurityMockMvcRequestPostProcessors.jwt()).header("Authorization", "Bearer " + trainerToken))
+            this.mockMvc.perform(post("/admin/user/delete/{email}", user.getEmail()).with(SecurityMockMvcRequestPostProcessors.jwt()).header("Authorization", "Bearer " + trainerToken))
                                                                                                  .andExpect(status().isForbidden())
                                                                                                  .andReturn()
                                                                                                  .getResponse()
