@@ -56,9 +56,9 @@ public class GF_UserManagementController {
         return ResponseEntity.ok(this.userManagementService.updateUser(userId, body.user()));
     }
 
-    @PostMapping("/admin/user/delete/{userId}")
-    public ResponseEntity<ReqResDTO> deleteUser(@PathVariable Long userId) {
-        return ResponseEntity.ok(this.userManagementService.deleteUserById(userId));
+    @PostMapping("/admin/user/delete/{userEmail}")
+    public ResponseEntity<ReqResDTO> deleteUser(@PathVariable String userEmail) {
+        return ResponseEntity.ok(this.userManagementService.deleteUserByEmail(userEmail));
     }
 
     @GetMapping("/ping")

@@ -298,6 +298,44 @@ public class GF_UserManagementService {
         return response;
     }
 
+    public ReqResDTO deleteUserByEmail(String email) throws EntityNotFoundException {
+        int responseStatusCode = 404;
+        String responseMessage = null;
+        String responseErrorMessage = null;
+
+        Optional<GF_User> userOptional = this.userRepository.findByEmail(email);
+
+        if (userOptional.isPresent()) {
+            this.userRepository.deleteById(userOptional.get().getId());
+
+            responseStatusCode = 200;
+            responseMessage = "User deleted successfully.";
+        } else {
+            responseStatusCode = 404;
+            responseMessage = "User not found.";
+
+            throw new EntityNotFoundException();
+        }
+
+        ReqResDTO response = new ReqResDTO(
+            responseStatusCode, 
+            responseErrorMessage, 
+            responseMessage, 
+            null,
+            null,
+            null,
+            null, 
+            null, 
+            null, 
+            null, 
+            null, 
+            null, 
+            null
+        );
+
+        return response;
+    }
+
     public ReqResDTO updateUser(Long userId, GF_User updatedUser) throws EntityNotFoundException {
 
         int responseStatusCode = 404;

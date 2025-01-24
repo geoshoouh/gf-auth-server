@@ -227,4 +227,15 @@ class GF_UserManagementServiceTests {
         Assert.eq(response.user().getRole(), updatedRole, "Expected " + updatedRole + ", was " + response.user().getRole());
         Assert.isTrue(response.user().getPassword() != existingPassword);
     }
+
+    @Test
+    void deleteUserByEmailDeletesUser() {
+        GF_User registeredUser = this.registrationUtil(UserRole.TRAINER);
+
+        Assert.eq(this.userManagementService.userCount(), 1L, "Expect user count 1; was " + this.userManagementService.userCount());
+
+        this.userManagementService.deleteUserByEmail(registeredUser.getEmail());
+
+        Assert.eq(this.userManagementService.userCount(), 0L, "Expect user count 0; was " + this.userManagementService.userCount());
+    }
 }
