@@ -176,9 +176,44 @@ public class GF_UserManagementControllerTests {
 
         String adminToken = userManagementService.login(request).token();
 
-        ReqResDTO response = gson.fromJson(
+        gson.fromJson(
             this.mockMvc.perform(post("/admin/user/delete/{id}", trainerUser.getId()).with(SecurityMockMvcRequestPostProcessors.jwt()).header("Authorization", "Bearer " + adminToken))
                                                                                                  .andExpect(status().isOk())
+                                                                                                 .andReturn()
+                                                                                                 .getResponse()
+                                                                                                 .getContentAsString(),     
+                                                                                                 ReqResDTO.class
+            );
+    }
+
+    @Test
+    void trainerCannotDeleteUser() throws Exception {
+
+        String trainerUserPass = "p@$$w0rd";
+        GF_User trainerUser = registrationUtil(UserRole.TRAINER, trainerUserPass);
+        GF_User user = registrationUtil(UserRole.TRAINER);
+
+        ReqResDTO request = new ReqResDTO(
+            0, 
+            null, 
+            null, 
+            null, 
+            null, 
+            null,
+            null, 
+            null, 
+            null, 
+            trainerUser.getEmail(), 
+            trainerUserPass, 
+            null, 
+            null
+        );
+
+        String trainerToken = userManagementService.login(request).token();
+
+        gson.fromJson(
+            this.mockMvc.perform(post("/admin/user/delete/{id}", user.getId()).with(SecurityMockMvcRequestPostProcessors.jwt()).header("Authorization", "Bearer " + trainerToken))
+                                                                                                 .andExpect(status().isForbidden())
                                                                                                  .andReturn()
                                                                                                  .getResponse()
                                                                                                  .getContentAsString(),     
