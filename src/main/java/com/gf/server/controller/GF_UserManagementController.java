@@ -41,23 +41,23 @@ public class GF_UserManagementController {
         return ResponseEntity.ok(this.userManagementService.refreshToken(request));
     }
 
-    @GetMapping("/admin/get-all-users")
+    @GetMapping("/admin/user/get/all")
     public ResponseEntity<ReqResDTO> getAllUsers() {
         return ResponseEntity.ok(this.userManagementService.getAllUsers());
     }
 
-    @GetMapping("/admin/get-user/{userId}")
+    @GetMapping("/admin/user/get/{userId}")
     public ResponseEntity<ReqResDTO> getUserById(@PathVariable Long userId) {
         return ResponseEntity.ok(this.userManagementService.getUserById(userId));
     }
     
-    @GetMapping("/admin/update/{userId}")
+    @GetMapping("/admin/user/update/{userId}")
     public ResponseEntity<ReqResDTO> updateUser(@PathVariable Long userId, @RequestBody ReqResDTO body) {
         return ResponseEntity.ok(this.userManagementService.updateUser(userId, body.user()));
     }
 
-    @PostMapping("/admin/delete/{userId}")
-    public ResponseEntity<ReqResDTO> deleteUser(@PathVariable Long userId, @RequestBody ReqResDTO body) {
+    @PostMapping("/admin/user/delete/{userId}")
+    public ResponseEntity<ReqResDTO> deleteUser(@PathVariable Long userId) {
         return ResponseEntity.ok(this.userManagementService.deleteUserById(userId));
     }
 
