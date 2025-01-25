@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 import javax.security.auth.login.FailedLoginException;
 
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -298,7 +299,12 @@ public class GF_UserManagementService {
         return response;
     }
 
-    public ReqResDTO deleteUserByEmail(String email) throws EntityNotFoundException {
+    public ReqResDTO deleteUserByEmail(String email) throws EntityNotFoundException, BadRequestException {
+
+        if (email == "admin@gmail.com") {
+            throw new BadRequestException("Cannot delete root admin user");
+        }
+
         int responseStatusCode = 404;
         String responseMessage = null;
         String responseErrorMessage = null;

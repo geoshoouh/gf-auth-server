@@ -3,6 +3,7 @@ package com.gf.server.service_tests;
 import javax.security.auth.login.FailedLoginException;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.coyote.BadRequestException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -238,7 +239,7 @@ class GF_UserManagementServiceTests {
     }
 
     @Test
-    void deleteUserByEmailDeletesUser() {
+    void deleteUserByEmailDeletesUser() throws BadRequestException {
         GF_User registeredUser = this.registrationUtil(UserRole.TRAINER);
 
         Assert.eq(this.userManagementService.userCount(), 1L, "Expect user count 1; was " + this.userManagementService.userCount());

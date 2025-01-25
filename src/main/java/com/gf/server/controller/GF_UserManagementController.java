@@ -2,6 +2,7 @@ package com.gf.server.controller;
 
 import javax.security.auth.login.FailedLoginException;
 
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -57,7 +58,7 @@ public class GF_UserManagementController {
     }
 
     @PostMapping("/admin/user/delete")
-    public ResponseEntity<ReqResDTO> deleteUser(@RequestBody ReqResDTO request) {
+    public ResponseEntity<ReqResDTO> deleteUser(@RequestBody ReqResDTO request) throws BadRequestException {
         return ResponseEntity.ok(this.userManagementService.deleteUserByEmail(request.email()));
     }
 

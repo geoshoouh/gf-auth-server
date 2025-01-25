@@ -2,6 +2,7 @@ package com.gf.server.exceptions;
 
 import javax.security.auth.login.FailedLoginException;
 
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -32,6 +33,13 @@ public class GF_UserManagementServiceControllerAdvice {
     @ExceptionHandler(EntityNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     String entityNotFoundExceptionHandler(EntityNotFoundException e) {
+        return e.getMessage();
+    }
+    
+    @ResponseBody
+    @ExceptionHandler(BadRequestException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    String badRequestExceptionHandler(BadRequestException e) {
         return e.getMessage();
     }
 }
