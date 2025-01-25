@@ -57,6 +57,11 @@ public class GF_UserManagementService {
         user.setRole(UserRole.stringToEnum(request.role()));
         user.setPassword(passwordEncoder.encode(request.password()));
 
+        if (userRepository.findByEmail(user.getEmail()).isPresent())
+        {
+            throw new FailedSaveException("Failed save exception: User with email " + user.getEmail() + " already exists.");
+        }
+
         GF_User userDB_Result = userRepository.save(user);
 
         if (userDB_Result.getId() > 0) {
@@ -64,7 +69,7 @@ public class GF_UserManagementService {
             responseMessage = "User saved successfully.";
             responseUser = userDB_Result;
         } else {
-            throw new FailedSaveException();
+            throw new FailedSaveException("Failed save exception: Database error.");
         }
         
 

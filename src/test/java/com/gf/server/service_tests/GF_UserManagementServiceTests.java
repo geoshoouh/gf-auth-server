@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import com.gf.server.dto.ReqResDTO;
 import com.gf.server.entity.GF_User;
 import com.gf.server.enumeration.UserRole;
+import com.gf.server.exceptions.FailedSaveException;
 import com.gf.server.service.GF_UserManagementService;
 
 import io.jsonwebtoken.lang.Assert;
@@ -95,6 +96,35 @@ class GF_UserManagementServiceTests {
 
         Assert.eq(response.statusCode(), 200, "Expected status code 200, was " + response.statusCode());
         Assert.isTrue(this.userManagementService.userCount() == 1);
+    }
+
+    @Test
+    void userRegistrationGuardsAgainstUpdatingExistingAccount() {
+        
+        GF_User registeredUser = registrationUtil(UserRole.TRAINER);
+
+        ReqResDTO registrationRequest = new ReqResDTO(
+            0, 
+            null, 
+            null, 
+            null, 
+            null, 
+            null, 
+            null,
+            null, 
+            registeredUser.getRole().toString(), 
+            registeredUser.getEmail(), 
+            registeredUser.getPassword(), 
+            null, 
+            null
+        );
+
+        try {
+            this.userManagementService.register(registrationRequest);
+            Assert.isTrue(false);
+        } catch  (FailedSaveException e) {
+            Assert.isTrue(true);
+        }
     }
 
     @Test
@@ -247,5 +277,15 @@ class GF_UserManagementServiceTests {
         this.userManagementService.deleteUserByEmail(registeredUser.getEmail());
 
         Assert.eq(this.userManagementService.userCount(), 0L, "Expect user count 0; was " + this.userManagementService.userCount());
+    }
+
+    @Test
+    void deleteUserByEmailGuardsAgainstDeletingRootAdmin() {
+        try {
+            this.userManagementService.deleteUserByEmail("admin@gmail.com");
+            Assert.isTrue(false);
+        } catch (BadRequestException e) {
+            Assert.isTrue(true);
+        } 
     }
 }
