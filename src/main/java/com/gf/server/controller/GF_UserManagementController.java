@@ -25,7 +25,7 @@ public class GF_UserManagementController {
     @Autowired
     private GF_UserManagementService userManagementService;
 
-    @PostMapping("/auth/register")
+    @PostMapping("/admin/register")
     public ResponseEntity<ReqResDTO> register(@RequestBody ReqResDTO request) {
         return ResponseEntity.ok(this.userManagementService.register(request));
     }

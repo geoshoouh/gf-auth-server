@@ -90,6 +90,27 @@ public class GF_UserManagementControllerTests {
     @Test
     void restControllerRegistersUsers() throws Exception {
 
+        String adminUserPassword = "p@55w0rd";
+        GF_User adminUser = registrationUtil(UserRole.ADMIN, adminUserPassword);
+
+        ReqResDTO adminUserLoginRequest = new ReqResDTO(
+            0, 
+            null, 
+            null, 
+            null, 
+            null, 
+            null,
+            null, 
+            null, 
+            null, 
+            adminUser.getEmail(), 
+            adminUserPassword, 
+            null, 
+            null
+        );
+
+        String adminUserToken = this.userManagementService.login(adminUserLoginRequest).token();
+
         ReqResDTO request = new ReqResDTO(
             0, 
             null, 
@@ -106,10 +127,11 @@ public class GF_UserManagementControllerTests {
             null
         );
 
-        this.mockMvc.perform(post("/auth/register")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(gson.toJson(request)))
-                    .andExpect(status().isOk());
+        this.mockMvc.perform(post("/admin/register").with(SecurityMockMvcRequestPostProcessors.jwt())
+                                                                .header("Authorization", "Bearer " + adminUserToken)
+                                                                .contentType(MediaType.APPLICATION_JSON)
+                                                                .content(gson.toJson(request)))
+                                                                .andExpect(status().isOk());
     }
 
     @Test
@@ -174,10 +196,11 @@ public class GF_UserManagementControllerTests {
             null
         );
 
-        String adminToken = userManagementService.login(request).token();
+        String adminToken = this.userManagementService.login(request).token();
 
         gson.fromJson(
-            this.mockMvc.perform(post("/admin/user/delete/{email}", trainerUser.getEmail()).with(SecurityMockMvcRequestPostProcessors.jwt()).header("Authorization", "Bearer " + adminToken))
+            this.mockMvc.perform(post("/admin/user/delete/{id}", trainerUser.getId()).with(SecurityMockMvcRequestPostProcessors.jwt())
+                                                                                                 .header("Authorization", "Bearer " + adminToken))
                                                                                                  .andExpect(status().isOk())
                                                                                                  .andReturn()
                                                                                                  .getResponse()
