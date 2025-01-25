@@ -199,13 +199,13 @@ public class GF_UserManagementControllerTests {
         String adminToken = this.userManagementService.login(request).token();
 
         gson.fromJson(
-            this.mockMvc.perform(post("/admin/user/delete/{id}", trainerUser.getId()).with(SecurityMockMvcRequestPostProcessors.jwt())
-                                                                                                 .header("Authorization", "Bearer " + adminToken))
-                                                                                                 .andExpect(status().isOk())
-                                                                                                 .andReturn()
-                                                                                                 .getResponse()
-                                                                                                 .getContentAsString(),     
-                                                                                                 ReqResDTO.class
+            this.mockMvc.perform(post("/admin/user/delete/{userEmail}", trainerUser.getEmail()).with(SecurityMockMvcRequestPostProcessors.jwt())
+                                                                                                           .header("Authorization", "Bearer " + adminToken))
+                                                                                                           .andExpect(status().isOk())
+                                                                                                           .andReturn()
+                                                                                                           .getResponse()
+                                                                                                           .getContentAsString(),     
+                                                                                                           ReqResDTO.class
             );
     }
 
