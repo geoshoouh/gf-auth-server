@@ -96,6 +96,15 @@ class GF_UserManagementServiceTests {
         Assert.isTrue(this.userManagementService.userCount() == 1);
     }
 
+    @Test
+    void registeredAdminHasCorrectAuthorities() {
+
+        GF_User registeredAdmin = this.registrationUtil(UserRole.ADMIN);
+
+        Assert.eq(registeredAdmin.getAuthorities().size(), 1, "Expected size of auth array to be 1, was " +registeredAdmin.getAuthorities().size());
+        Assert.isTrue(registeredAdmin.getAuthorities().stream().anyMatch(authority -> authority.getAuthority().equals("ADMIN")));
+    }
+
     @Test  
     void registeredUserCanLogin() throws FailedLoginException {
 
