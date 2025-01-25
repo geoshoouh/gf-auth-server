@@ -179,7 +179,7 @@ public class GF_UserManagementControllerTests {
         GF_User adminUser = registrationUtil(UserRole.ADMIN, adminUserPass);
         GF_User trainerUser = registrationUtil(UserRole.TRAINER);
 
-        ReqResDTO request = new ReqResDTO(
+        ReqResDTO adminLoginRequest = new ReqResDTO(
             0, 
             null, 
             null, 
@@ -195,15 +195,33 @@ public class GF_UserManagementControllerTests {
             null
         );
 
-        String adminToken = this.userManagementService.login(request).token();
+        ReqResDTO userDeleteRequest = new ReqResDTO(
+            0, 
+            null, 
+            null, 
+            null, 
+            null, 
+            null,
+            null, 
+            null, 
+            null, 
+            trainerUser.getEmail(), 
+            null, 
+            null, 
+            null
+        );
+
+        String adminToken = this.userManagementService.login(adminLoginRequest).token();
 
         gson.fromJson(
-            this.mockMvc.perform(post("/admin/user/delete/{userEmail}", trainerUser.getEmail()).header("Authorization", "Bearer " + adminToken))
-                                                                                                           .andExpect(status().isOk())
-                                                                                                           .andReturn()
-                                                                                                           .getResponse()
-                                                                                                           .getContentAsString(),     
-                                                                                                           ReqResDTO.class
+            this.mockMvc.perform(post("/admin/user/delete", trainerUser.getEmail()).header("Authorization", "Bearer " + adminToken)
+                                                                                               .contentType(MediaType.APPLICATION_JSON)
+                                                                                               .content(gson.toJson(userDeleteRequest)))
+                                                                                               .andExpect(status().isOk())
+                                                                                               .andReturn()
+                                                                                               .getResponse()
+                                                                                               .getContentAsString(),     
+                                                                                               ReqResDTO.class
             );
     }
 
