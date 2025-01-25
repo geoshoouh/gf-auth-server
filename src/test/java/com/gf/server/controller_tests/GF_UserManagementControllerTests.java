@@ -127,8 +127,7 @@ public class GF_UserManagementControllerTests {
             null
         );
 
-        this.mockMvc.perform(post("/admin/register").with(SecurityMockMvcRequestPostProcessors.jwt())
-                                                                .header("Authorization", "Bearer " + adminUserToken)
+        this.mockMvc.perform(post("/admin/register").header("Authorization", "Bearer " + adminUserToken)
                                                                 .contentType(MediaType.APPLICATION_JSON)
                                                                 .content(gson.toJson(request)))
                                                                 .andExpect(status().isOk());
@@ -199,8 +198,7 @@ public class GF_UserManagementControllerTests {
         String adminToken = this.userManagementService.login(request).token();
 
         gson.fromJson(
-            this.mockMvc.perform(post("/admin/user/delete/{userEmail}", trainerUser.getEmail()).with(SecurityMockMvcRequestPostProcessors.jwt())
-                                                                                                           .header("Authorization", "Bearer " + adminToken))
+            this.mockMvc.perform(post("/admin/user/delete/{userEmail}", trainerUser.getEmail()).header("Authorization", "Bearer " + adminToken))
                                                                                                            .andExpect(status().isOk())
                                                                                                            .andReturn()
                                                                                                            .getResponse()
