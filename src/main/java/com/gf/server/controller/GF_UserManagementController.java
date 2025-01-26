@@ -73,13 +73,21 @@ public class GF_UserManagementController {
 
     @PostMapping("/trainer/user/update/password")
     public ResponseEntity<Boolean> updateTrainerUser(@RequestBody ReqResDTO request) {
-        
-        GF_User user = this.userManagementService.getUserByEmail(request.email()).user();
 
-        user.setPassword(request.newPassword());
+        ResponseEntity<Boolean> response = ResponseEntity.ok(true);
 
-        this.userManagementService.updateUser(request.email(), user);
+        try {
+            this.userManagementService.login(request);
 
-        return ResponseEntity.ok(true);
+            GF_User user = this.userManagementService.getUserByEmail(request.email()).user();
+
+            user.setPassword(request.newPassword());
+
+            this.userManagementService.updateUser(request.email(), user);
+        } catch (FailedLoginException e) {
+            response = ResponseEntity.status(403).body(false);
+        }
+
+        return response;
     }
 }
