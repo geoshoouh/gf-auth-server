@@ -302,14 +302,8 @@ public class GF_UserManagementControllerTests {
 
         String trainerToken = userManagementService.login(request).token();
 
-        gson.fromJson(
-            this.mockMvc.perform(get("/auth/token/validate/trainer").header("Authorization", "Bearer " + trainerToken))
-                                                                                                 .andExpect(status().isOk())
-                                                                                                 .andReturn()
-                                                                                                 .getResponse()
-                                                                                                 .getContentAsString(),     
-                                                                                                 Boolean.class
-            );
+        this.mockMvc.perform(get("/auth/token/validate/trainer").header("Authorization", "Bearer " + trainerToken))
+                                                                          .andExpect(status().isOk());
     }
 
     @Test
@@ -335,13 +329,8 @@ public class GF_UserManagementControllerTests {
 
         String trainerToken = userManagementService.login(request).token();
 
-        gson.fromJson(
-            this.mockMvc.perform(get("/auth/token/validate/admin").header("Authorization", "Bearer " + trainerToken))
-                                                                                                 .andExpect(status().isOk())
-                                                                                                 .andReturn()
-                                                                                                 .getResponse()
-                                                                                                 .getContentAsString(),     
-                                                                                                 Boolean.class
-            );
+        
+        this.mockMvc.perform(get("/auth/token/validate/admin").header("Authorization", "Bearer " + trainerToken))
+                                                                          .andExpect(status().isForbidden());
     }
 }
