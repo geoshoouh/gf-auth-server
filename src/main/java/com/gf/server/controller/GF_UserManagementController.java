@@ -77,5 +77,4 @@ public class GF_UserManagementController {
 
         return retVal;
     }
-    
 }
