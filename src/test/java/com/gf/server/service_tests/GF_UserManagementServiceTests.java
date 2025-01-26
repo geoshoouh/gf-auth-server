@@ -314,7 +314,17 @@ class GF_UserManagementServiceTests {
         ReqResDTO loginResponse = this.userManagementService.login(loginRequest);
 
         boolean validationResult = this.userManagementService.validateToken(loginResponse.token());
-
+        System.out.println("Token: " + loginResponse.token());
         Assert.isTrue(validationResult);
+    }
+
+    @Test
+    void validateTokenRejectsBadToken() {
+
+        String badToken = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzR0lZdmxnQFpZY0MuY29tIiwiaWF0IjoxNzM3OTE2MDg4LCJleHAiOjE3MzgwMDI0ODh9.FHXROv9m6kjvOAXf6ZDS6jfJIVuNHIHQEFpT96A6hzo";
+
+        boolean validationResult = this.userManagementService.validateToken(badToken);
+
+        Assert.isTrue(!validationResult);
     }
 }
