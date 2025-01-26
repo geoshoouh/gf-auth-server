@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -77,6 +78,7 @@ public class GF_UserManagementControllerTests {
             roleString, 
             RandomStringUtils.randomAlphanumeric(7) + "@" + RandomStringUtils.randomAlphabetic(4) + ".com", 
             password, 
+            null,
             null, 
             null
         );
@@ -104,6 +106,7 @@ public class GF_UserManagementControllerTests {
             null, 
             adminUser.getEmail(), 
             adminUserPassword, 
+            null,
             null, 
             null
         );
@@ -122,6 +125,7 @@ public class GF_UserManagementControllerTests {
             "Admin", 
             "geoshoouh@gmail.com", 
             "p@55w0rd", 
+            null,
             null, 
             null
         );
@@ -149,6 +153,7 @@ public class GF_UserManagementControllerTests {
             null, 
             registeredUser.getEmail(), 
             registeredUserPassword, 
+            null,
             null, 
             null
         );
@@ -190,6 +195,7 @@ public class GF_UserManagementControllerTests {
             null, 
             adminUser.getEmail(), 
             adminUserPass, 
+            null,
             null, 
             null
         );
@@ -206,6 +212,7 @@ public class GF_UserManagementControllerTests {
             null, 
             trainerUser.getEmail(), 
             null, 
+            null,
             null, 
             null
         );
@@ -244,6 +251,7 @@ public class GF_UserManagementControllerTests {
             null, 
             trainerUser.getEmail(), 
             trainerUserPass, 
+            null,
             null, 
             null
         );
@@ -261,6 +269,7 @@ public class GF_UserManagementControllerTests {
             user.getEmail(), 
             null, 
             null, 
+            null,
             null
         );
 
@@ -296,6 +305,7 @@ public class GF_UserManagementControllerTests {
             null, 
             trainerUser.getEmail(), 
             trainerUserPass, 
+            null,
             null, 
             null
         );
@@ -323,6 +333,7 @@ public class GF_UserManagementControllerTests {
             null, 
             trainerUser.getEmail(), 
             trainerUserPass, 
+            null,
             null, 
             null
         );
@@ -332,5 +343,194 @@ public class GF_UserManagementControllerTests {
         
         this.mockMvc.perform(get("/auth/token/validate/admin").header("Authorization", "Bearer " + trainerToken))
                                                                           .andExpect(status().isForbidden());
+    }
+
+    @Test 
+    void updateTrainerPasswordUpdatesPassword() throws Exception {
+        String trainerUserPass = "p@$$w0rd";
+        String newTrainerPass = "n3wP@$$w0rd";
+        GF_User trainerUser = registrationUtil(UserRole.TRAINER, trainerUserPass);
+
+        ReqResDTO loginRequest = new ReqResDTO(
+            0, 
+            null, 
+            null, 
+            null, 
+            null, 
+            null,
+            null, 
+            null, 
+            null, 
+            trainerUser.getEmail(), 
+            trainerUserPass, 
+            null,
+            null, 
+            null
+        );
+
+        String trainerToken = userManagementService.login(loginRequest).token();
+
+        ReqResDTO updateRequest = new ReqResDTO(
+            0, 
+            null, 
+            null, 
+            null, 
+            null, 
+            null,
+            null, 
+            null, 
+            null, 
+            trainerUser.getEmail(), 
+            trainerUserPass, 
+            newTrainerPass,
+            null, 
+            null
+        );
+
+        this.mockMvc.perform(post("/trainer/user/update/password").header("Authorization", "Bearer " + trainerToken)
+                                                                              .contentType(MediaType.APPLICATION_JSON)
+                                                                              .content(gson.toJson(updateRequest)))
+                                                                              .andExpect(status().isOk());
+                                                                       
+        ReqResDTO updateRequest2 = new ReqResDTO(
+            0, 
+            null, 
+            null, 
+            null, 
+            null, 
+            null,
+            null, 
+            null, 
+            null, 
+            trainerUser.getEmail(), 
+            newTrainerPass, 
+            null,
+            null, 
+            null
+        );
+
+        this.userManagementService.login(updateRequest2);   
+    }
+
+    @Test 
+    void updateTrainerPasswordInvalidatesOldPassword() throws Exception {
+        String trainerUserPass = "p@$$w0rd";
+        String newTrainerPass = "n3wP@$$w0rd";
+        GF_User trainerUser = registrationUtil(UserRole.TRAINER, trainerUserPass);
+
+        ReqResDTO loginRequest = new ReqResDTO(
+            0, 
+            null, 
+            null, 
+            null, 
+            null, 
+            null,
+            null, 
+            null, 
+            null, 
+            trainerUser.getEmail(), 
+            trainerUserPass, 
+            null,
+            null, 
+            null
+        );
+
+        String trainerToken = userManagementService.login(loginRequest).token();
+
+        ReqResDTO updateRequest = new ReqResDTO(
+            0, 
+            null, 
+            null, 
+            null, 
+            null, 
+            null,
+            null, 
+            null, 
+            null, 
+            trainerUser.getEmail(), 
+            trainerUserPass, 
+            newTrainerPass,
+            null, 
+            null
+        );
+
+        this.mockMvc.perform(post("/trainer/user/update/password").header("Authorization", "Bearer " + trainerToken)
+                                                                              .contentType(MediaType.APPLICATION_JSON)
+                                                                              .content(gson.toJson(updateRequest)))
+                                                                              .andExpect(status().isOk());
+                                                                       
+        ReqResDTO updateRequest2 = new ReqResDTO(
+            0, 
+            null, 
+            null, 
+            null, 
+            null, 
+            null,
+            null, 
+            null, 
+            null, 
+            trainerUser.getEmail(), 
+            trainerUserPass, 
+            null,
+            null, 
+            null
+        );
+        
+        boolean exceptionCaught = false;
+
+        try {
+            this.userManagementService.login(updateRequest2); 
+        } catch (BadCredentialsException e) {
+            exceptionCaught = true;
+        }
+
+        Assert.isTrue(exceptionCaught);       
+    }
+
+    @Test 
+    void updateTrainerPasswordGuardsAgainstBadAccess() throws Exception {
+        String clientUserPass = "p@$$w0rd";
+        GF_User clientUser = registrationUtil(UserRole.CLIENT, clientUserPass);
+
+        ReqResDTO loginRequest = new ReqResDTO(
+            0, 
+            null, 
+            null, 
+            null, 
+            null, 
+            null,
+            null, 
+            null, 
+            null, 
+            clientUser.getEmail(), 
+            clientUserPass, 
+            null,
+            null, 
+            null
+        );
+
+        String trainerToken = userManagementService.login(loginRequest).token();
+
+        ReqResDTO updateRequest = new ReqResDTO(
+            0, 
+            null, 
+            null, 
+            null, 
+            null, 
+            null,
+            null, 
+            null, 
+            null, 
+            clientUser.getEmail(), 
+            clientUserPass, 
+            "newClentPass",
+            null, 
+            null
+        );
+
+        this.mockMvc.perform(post("/trainer/user/update/password").header("Authorization", "Bearer " + trainerToken)
+                                                                              .contentType(MediaType.APPLICATION_JSON)
+                                                                              .content(gson.toJson(updateRequest)))
+                                                                              .andExpect(status().isForbidden());
     }
 }
