@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -230,7 +229,60 @@ public class GF_UserManagementControllerTests {
 
         String trainerUserPass = "p@$$w0rd";
         GF_User trainerUser = registrationUtil(UserRole.TRAINER, trainerUserPass);
+
         GF_User user = registrationUtil(UserRole.TRAINER);
+
+        ReqResDTO request = new ReqResDTO(
+            0, 
+            null, 
+            null, 
+            null, 
+            null, 
+            null,
+            null, 
+            null, 
+            null, 
+            trainerUser.getEmail(), 
+            trainerUserPass, 
+            null, 
+            null
+        );
+
+        ReqResDTO userDeleteRequest = new ReqResDTO(
+            0, 
+            null, 
+            null, 
+            null, 
+            null, 
+            null,
+            null, 
+            null, 
+            null, 
+            user.getEmail(), 
+            null, 
+            null, 
+            null
+        );
+
+        String trainerToken = userManagementService.login(request).token();
+
+        gson.fromJson(
+            this.mockMvc.perform(post("/admin/user/delete").header("Authorization", "Bearer " + trainerToken)
+                                                                       .contentType(MediaType.APPLICATION_JSON)
+                                                                       .content(gson.toJson(userDeleteRequest)))
+                                                                       .andExpect(status().isForbidden())
+                                                                       .andReturn()
+                                                                       .getResponse()
+                                                                       .getContentAsString(),     
+                                                                       ReqResDTO.class
+            );
+    }
+
+    @Test
+    void validateTokenRequestValidatesToken() throws Exception {
+
+        String trainerUserPass = "p@$$w0rd";
+        GF_User trainerUser = registrationUtil(UserRole.TRAINER, trainerUserPass);
 
         ReqResDTO request = new ReqResDTO(
             0, 
@@ -250,13 +302,35 @@ public class GF_UserManagementControllerTests {
 
         String trainerToken = userManagementService.login(request).token();
 
-        gson.fromJson(
-            this.mockMvc.perform(post("/admin/user/delete/{email}", user.getEmail()).with(SecurityMockMvcRequestPostProcessors.jwt()).header("Authorization", "Bearer " + trainerToken))
-                                                                                                 .andExpect(status().isForbidden())
-                                                                                                 .andReturn()
-                                                                                                 .getResponse()
-                                                                                                 .getContentAsString(),     
-                                                                                                 ReqResDTO.class
-            );
+        this.mockMvc.perform(get("/auth/token/validate/trainer").header("Authorization", "Bearer " + trainerToken))
+                                                                          .andExpect(status().isOk());
+    }
+
+    @Test
+    void validateTokenRejectsBadToken() throws Exception {
+        String trainerUserPass = "p@$$w0rd";
+        GF_User trainerUser = registrationUtil(UserRole.TRAINER, trainerUserPass);
+
+        ReqResDTO request = new ReqResDTO(
+            0, 
+            null, 
+            null, 
+            null, 
+            null, 
+            null,
+            null, 
+            null, 
+            null, 
+            trainerUser.getEmail(), 
+            trainerUserPass, 
+            null, 
+            null
+        );
+
+        String trainerToken = userManagementService.login(request).token();
+
+        
+        this.mockMvc.perform(get("/auth/token/validate/admin").header("Authorization", "Bearer " + trainerToken))
+                                                                          .andExpect(status().isForbidden());
     }
 }

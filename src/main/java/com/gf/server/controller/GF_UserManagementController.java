@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 
-
 @RestController
 public class GF_UserManagementController {
 
@@ -65,5 +64,23 @@ public class GF_UserManagementController {
     @GetMapping("/ping")
     public ResponseEntity<String> pingAuthenticationServer() {
         return ResponseEntity.ok("Genesis Fitness User Authentication Server is HEALTHY.\n");
+    }
+
+    @GetMapping("/auth/token/validate/admin")
+    public ResponseEntity<Boolean> validateTokenAdmin() {
+    
+        return ResponseEntity.ok(true);
+    }
+
+    @GetMapping("/auth/token/validate/trainer")
+    public ResponseEntity<Boolean> validateTokenTrainer() {
+    
+        return ResponseEntity.ok(true);
+    }
+
+    @GetMapping("/auth/token/validate/client")
+    public ResponseEntity<Boolean> validateTokenClient() {
+    
+        return ResponseEntity.ok(true);
     }
 }
