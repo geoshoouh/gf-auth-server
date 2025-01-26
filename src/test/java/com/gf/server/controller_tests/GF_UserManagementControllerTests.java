@@ -486,4 +486,51 @@ public class GF_UserManagementControllerTests {
 
         Assert.isTrue(exceptionCaught);       
     }
+
+    @Test 
+    void updateTrainerPasswordGuardsAgainstBadAccess() throws Exception {
+        String clientUserPass = "p@$$w0rd";
+        GF_User clientUser = registrationUtil(UserRole.CLIENT, clientUserPass);
+
+        ReqResDTO loginRequest = new ReqResDTO(
+            0, 
+            null, 
+            null, 
+            null, 
+            null, 
+            null,
+            null, 
+            null, 
+            null, 
+            clientUser.getEmail(), 
+            clientUserPass, 
+            null,
+            null, 
+            null
+        );
+
+        String trainerToken = userManagementService.login(loginRequest).token();
+
+        ReqResDTO updateRequest = new ReqResDTO(
+            0, 
+            null, 
+            null, 
+            null, 
+            null, 
+            null,
+            null, 
+            null, 
+            null, 
+            clientUser.getEmail(), 
+            clientUserPass, 
+            "newClentPass",
+            null, 
+            null
+        );
+
+        this.mockMvc.perform(post("/trainer/user/update/password").header("Authorization", "Bearer " + trainerToken)
+                                                                              .contentType(MediaType.APPLICATION_JSON)
+                                                                              .content(gson.toJson(updateRequest)))
+                                                                              .andExpect(status().isForbidden());
+    }
 }
