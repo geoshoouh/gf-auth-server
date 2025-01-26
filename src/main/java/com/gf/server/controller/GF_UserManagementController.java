@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gf.server.dto.ReqResDTO;
+import com.gf.server.enumeration.UserRole;
 import com.gf.server.service.GF_UserManagementService;
 
 import jakarta.security.auth.message.AuthException;
@@ -66,15 +67,21 @@ public class GF_UserManagementController {
         return ResponseEntity.ok("Genesis Fitness User Authentication Server is HEALTHY.\n");
     }
 
-    @GetMapping("/auth/token/validate")
-    public boolean validateToken(@RequestBody String token) {
-        
-        boolean retVal = false;
+    @GetMapping("/auth/token/validate/admin")
+    public ResponseEntity<Boolean> validateTokenAdmin() {
+    
+        return ResponseEntity.ok(true);
+    }
 
-        if (this.userManagementService.validateToken(token)) {
-            retVal = true;
-        }
+    @GetMapping("/auth/token/validate/trainer")
+    public ResponseEntity<Boolean> validateTokenTrainer() {
+    
+        return ResponseEntity.ok(true);
+    }
 
-        return retVal;
+    @GetMapping("/auth/token/validate/client")
+    public ResponseEntity<Boolean> validateTokenClient() {
+    
+        return ResponseEntity.ok(true);
     }
 }

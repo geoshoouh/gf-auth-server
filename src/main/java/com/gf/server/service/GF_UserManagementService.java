@@ -402,19 +402,4 @@ public class GF_UserManagementService {
 
         return response;
     }
-
-    public boolean validateToken(String token) {
-        
-        boolean retVal = false;
-
-        try {
-            String userEmail = jwtUtils.extractUsername(token);
-            userRepository.findByEmail(userEmail).orElseThrow(() -> new AuthException());
-            retVal = true;
-        } catch (AuthException e) {
-            logger.info("Token failed validity check");
-        }
-
-        return retVal;
-    }
 }
