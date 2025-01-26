@@ -288,4 +288,33 @@ class GF_UserManagementServiceTests {
             Assert.isTrue(true);
         } 
     }
+
+    @Test
+    void validateTokenValidatesToken() throws FailedLoginException {
+
+        String userPassword = "p@$$w0rd";
+        GF_User registeredUser = this.registrationUtil(UserRole.TRAINER, userPassword);
+
+        ReqResDTO loginRequest = new ReqResDTO(
+            0, 
+            null, 
+            null, 
+            null, 
+            null, 
+            null,
+            null, 
+            null, 
+            null, 
+            registeredUser.getEmail(), 
+            userPassword, 
+            null, 
+            null
+        );
+
+        ReqResDTO loginResponse = this.userManagementService.login(loginRequest);
+
+        boolean validationResult = this.userManagementService.validateToken(loginResponse.token());
+
+        Assert.isTrue(validationResult);
+    }
 }
