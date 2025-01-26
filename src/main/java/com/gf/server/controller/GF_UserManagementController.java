@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gf.server.dto.ReqResDTO;
+import com.gf.server.entity.GF_User;
 import com.gf.server.service.GF_UserManagementService;
 
 import jakarta.security.auth.message.AuthException;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 
 @RestController
@@ -46,16 +46,6 @@ public class GF_UserManagementController {
         return ResponseEntity.ok(this.userManagementService.getAllUsers());
     }
 
-    @GetMapping("/admin/user/get/{userId}")
-    public ResponseEntity<ReqResDTO> getUserById(@PathVariable Long userId) {
-        return ResponseEntity.ok(this.userManagementService.getUserById(userId));
-    }
-    
-    @GetMapping("/admin/user/update/{userId}")
-    public ResponseEntity<ReqResDTO> updateUser(@PathVariable Long userId, @RequestBody ReqResDTO body) {
-        return ResponseEntity.ok(this.userManagementService.updateUser(userId, body.user()));
-    }
-
     @PostMapping("/admin/user/delete")
     public ResponseEntity<ReqResDTO> deleteUser(@RequestBody ReqResDTO request) throws BadRequestException {
         return ResponseEntity.ok(this.userManagementService.deleteUserByEmail(request.email()));
@@ -68,19 +58,28 @@ public class GF_UserManagementController {
 
     @GetMapping("/auth/token/validate/admin")
     public ResponseEntity<Boolean> validateTokenAdmin() {
-    
         return ResponseEntity.ok(true);
     }
 
     @GetMapping("/auth/token/validate/trainer")
     public ResponseEntity<Boolean> validateTokenTrainer() {
-    
         return ResponseEntity.ok(true);
     }
 
     @GetMapping("/auth/token/validate/client")
     public ResponseEntity<Boolean> validateTokenClient() {
-    
+        return ResponseEntity.ok(true);
+    }
+
+    @PostMapping("/trainer/user/update/password")
+    public ResponseEntity<Boolean> updateTrainerUser(@RequestBody ReqResDTO request) {
+        
+        GF_User user = this.userManagementService.getUserByEmail(request.email()).user();
+
+        user.setPassword(request.newPassword());
+
+        this.userManagementService.updateUser(request.email(), user);
+
         return ResponseEntity.ok(true);
     }
 }

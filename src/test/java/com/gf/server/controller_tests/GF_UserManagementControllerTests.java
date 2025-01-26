@@ -77,6 +77,7 @@ public class GF_UserManagementControllerTests {
             roleString, 
             RandomStringUtils.randomAlphanumeric(7) + "@" + RandomStringUtils.randomAlphabetic(4) + ".com", 
             password, 
+            null,
             null, 
             null
         );
@@ -104,6 +105,7 @@ public class GF_UserManagementControllerTests {
             null, 
             adminUser.getEmail(), 
             adminUserPassword, 
+            null,
             null, 
             null
         );
@@ -122,6 +124,7 @@ public class GF_UserManagementControllerTests {
             "Admin", 
             "geoshoouh@gmail.com", 
             "p@55w0rd", 
+            null,
             null, 
             null
         );
@@ -149,6 +152,7 @@ public class GF_UserManagementControllerTests {
             null, 
             registeredUser.getEmail(), 
             registeredUserPassword, 
+            null,
             null, 
             null
         );
@@ -190,6 +194,7 @@ public class GF_UserManagementControllerTests {
             null, 
             adminUser.getEmail(), 
             adminUserPass, 
+            null,
             null, 
             null
         );
@@ -206,6 +211,7 @@ public class GF_UserManagementControllerTests {
             null, 
             trainerUser.getEmail(), 
             null, 
+            null,
             null, 
             null
         );
@@ -244,6 +250,7 @@ public class GF_UserManagementControllerTests {
             null, 
             trainerUser.getEmail(), 
             trainerUserPass, 
+            null,
             null, 
             null
         );
@@ -261,6 +268,7 @@ public class GF_UserManagementControllerTests {
             user.getEmail(), 
             null, 
             null, 
+            null,
             null
         );
 
@@ -296,6 +304,7 @@ public class GF_UserManagementControllerTests {
             null, 
             trainerUser.getEmail(), 
             trainerUserPass, 
+            null,
             null, 
             null
         );
@@ -323,6 +332,7 @@ public class GF_UserManagementControllerTests {
             null, 
             trainerUser.getEmail(), 
             trainerUserPass, 
+            null,
             null, 
             null
         );

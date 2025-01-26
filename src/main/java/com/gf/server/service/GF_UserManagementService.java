@@ -81,6 +81,7 @@ public class GF_UserManagementService {
             null, 
             null,
             null, 
+            null,
             null, 
             null, 
             null, 
@@ -128,6 +129,7 @@ public class GF_UserManagementService {
             null,
             null, 
             null, 
+            null,
             null, 
             null, 
             user, 
@@ -172,6 +174,7 @@ public class GF_UserManagementService {
             responseExpirationTime, 
             null,
             null, 
+            null,
             null, 
             null, 
             null, 
@@ -209,6 +212,7 @@ public class GF_UserManagementService {
             null,
             null, 
             null, 
+            null,
             null, 
             null, 
             null, 
@@ -233,16 +237,16 @@ public class GF_UserManagementService {
         return this.userRepository.count();
     }
 
-    public ReqResDTO getUserById(Long id) {
+    public ReqResDTO getUserByEmail(String email) {
         GF_User responseUser = null;
         int responseStatusCode = 500;
         String responseMessage = null;
         String responseErrorMessage = null;
 
         try {
-            responseUser = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found."));
+            responseUser = userRepository.findByEmail(email).orElseThrow(() -> new RuntimeException("User not found."));
             responseStatusCode = 200;
-            responseMessage = "User with id " + id + " found successfully.";
+            responseMessage = "User with email " + email + " found successfully.";
         } catch (Exception e) {
             responseErrorMessage = e.getMessage();
         }
@@ -256,6 +260,7 @@ public class GF_UserManagementService {
             null,
             null, 
             null, 
+            null,
             null, 
             null, 
             null, 
@@ -295,6 +300,7 @@ public class GF_UserManagementService {
             null, 
             null, 
             null, 
+            null,
             null, 
             null, 
             null, 
@@ -338,6 +344,7 @@ public class GF_UserManagementService {
             null, 
             null, 
             null, 
+            null,
             null, 
             null, 
             null, 
@@ -347,7 +354,7 @@ public class GF_UserManagementService {
         return response;
     }
 
-    public ReqResDTO updateUser(Long userId, GF_User updatedUser) throws EntityNotFoundException {
+    public ReqResDTO updateUser(String userEmail, GF_User updatedUser) throws EntityNotFoundException {
 
         int responseStatusCode = 404;
         String responseMessage = null;
@@ -355,7 +362,7 @@ public class GF_UserManagementService {
         GF_User responseUser = null;
 
         try {
-            Optional<GF_User> userOptional = userRepository.findById(userId);
+            Optional<GF_User> userOptional = userRepository.findByEmail(userEmail);
 
             if (userOptional.isPresent()) {
                 GF_User existingUser = userOptional.get();
@@ -388,6 +395,7 @@ public class GF_UserManagementService {
             responseStatusCode, 
             responseErrorMessage, 
             responseMessage, 
+            null,
             null,
             null,
             null,

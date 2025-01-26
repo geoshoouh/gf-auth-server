@@ -58,6 +58,7 @@ class GF_UserManagementServiceTests {
             roleString, 
             RandomStringUtils.randomAlphanumeric(7) + "@" + RandomStringUtils.randomAlphabetic(4) + ".com", 
             password, 
+            null,
             null, 
             null
         );
@@ -86,6 +87,7 @@ class GF_UserManagementServiceTests {
             "Admin", 
             "geoshoouh@gmail.com", 
             "p@55w0rd", 
+            null,
             null, 
             null
         );
@@ -115,6 +117,7 @@ class GF_UserManagementServiceTests {
             registeredUser.getRole().toString(), 
             registeredUser.getEmail(), 
             registeredUser.getPassword(), 
+            null,
             null, 
             null
         );
@@ -154,6 +157,7 @@ class GF_UserManagementServiceTests {
             null, 
             registeredUser.getEmail(), 
             password, 
+            null,
             null, 
             null
         );
@@ -184,6 +188,7 @@ class GF_UserManagementServiceTests {
             null, 
             registeredUser.getEmail(), 
             password, 
+            null,
             null, 
             null
         );
@@ -202,6 +207,7 @@ class GF_UserManagementServiceTests {
             null, 
             null, 
             null, 
+            null,
             null, 
             null
         );
@@ -214,10 +220,10 @@ class GF_UserManagementServiceTests {
     }
 
     @Test  
-    void getUserByIdGetsUserById() {
+    void getUserByEmailGetsUserByEmail() {
         GF_User registeredUser = this.registrationUtil(UserRole.TRAINER);
 
-        GF_User foundUser = this.userManagementService.getUserById(registeredUser.getId()).user();
+        GF_User foundUser = this.userManagementService.getUserByEmail(registeredUser.getEmail()).user();
 
         Assert.notNull(foundUser);
         Assert.eq(registeredUser.getId(), foundUser.getId(), "Registered: " + registeredUser.getId() + "; Found: " + foundUser.getId());
@@ -258,7 +264,7 @@ class GF_UserManagementServiceTests {
         updatedUser.setRole(updatedRole);
         updatedUser.setPassword(updatedPassword);
 
-        ReqResDTO response = this.userManagementService.updateUser(registeredUser.getId(), updatedUser);
+        ReqResDTO response = this.userManagementService.updateUser(registeredUser.getEmail(), updatedUser);
 
         Assert.eq(response.statusCode(), 200, "Status code was " + response.statusCode() + ", expected " + 200);
         Assert.eq(response.user().getEmail(), updatedEmail, "Expected " + updatedEmail + ", was " + response.user().getEmail());

@@ -20,6 +20,7 @@ public record ReqResDTO (
     String role,
     String email,
     String password,
+    String newPassword,
     GF_User user,
     List<GF_User> userList
 ) {}
