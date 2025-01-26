@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gf.server.dto.ReqResDTO;
-import com.gf.server.enumeration.UserRole;
 import com.gf.server.service.GF_UserManagementService;
 
 import jakarta.security.auth.message.AuthException;
