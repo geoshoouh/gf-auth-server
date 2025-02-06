@@ -21,10 +21,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Set up JDK 23
+    - name: Set up JDK 21
       uses: actions/setup-java@v4
       with:
-        java-version: '23'
+        java-version: '21'
         distribution: 'temurin'
         cache: maven
     - name: Build with Maven
@@ -34,6 +34,15 @@ jobs:
       with:
         name: maven-build-artifacts
         path: target
+    - name: Generate Jacoco coverage report
+      run: mvn test jacoco:report
+    - name: Upload coverage report to Codecov
+      uses: codecov/codecov-action@v4
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        files: target/site/jacoco/jacoco.xml
+        flags: unittests
+        fail_ci_if_error: true
 
   containerize:
     permissions: write-all
